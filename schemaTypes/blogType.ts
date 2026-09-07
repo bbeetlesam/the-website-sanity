@@ -36,7 +36,7 @@ const blogType = defineType({
     defineField({
       name: 'publishedAt',
       title: 'Published at',
-      type: 'datetime',
+      type: 'date',
       validation: (rule) => rule.required(),
     }),
 
