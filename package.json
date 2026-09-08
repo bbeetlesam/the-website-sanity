@@ -10,7 +10,7 @@
     "deploy-graphql": "sanity graphql deploy",
     "dev": "sanity dev",
     "start": "sanity start",
-    "check": "prettier --check .",
+    "check": "prettier --check . && eslint .",
     "format": "prettier --write ."
   },
   "keywords": [
@@ -22,6 +22,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "sanity": "^6.12.0",
+    "sanity-plugin-media": "^6.1.8",
     "styled-components": "^6.5.3"
   },
   "devDependencies": {
