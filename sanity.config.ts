@@ -3,6 +3,8 @@ import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 import { schemaTypes } from './schemaTypes';
 
+import { defaultDocumentNode } from './studio/structure';
+
 export default defineConfig({
   name: 'default',
   title: 'sam-website',
@@ -10,7 +12,7 @@ export default defineConfig({
   projectId: '55meutke',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool({ defaultDocumentNode }), visionTool()],
 
   schema: {
     types: schemaTypes,
