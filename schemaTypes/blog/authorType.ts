@@ -32,6 +32,13 @@ const authorType = defineType({
       },
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'nickname',
+    },
+  },
 });
 
 export default authorType;

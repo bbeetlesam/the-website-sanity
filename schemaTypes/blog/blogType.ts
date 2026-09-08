@@ -56,6 +56,21 @@ const blogType = defineType({
       validation: (rule) => rule.required(),
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'title',
+      author: 'author.nickname',
+      publishedAt: 'publishedAt',
+    },
+
+    prepare({ title, author, publishedAt }) {
+      return {
+        title,
+        subtitle: `${author} · ${publishedAt}`,
+      };
+    },
+  },
 });
 
 export default blogType;
