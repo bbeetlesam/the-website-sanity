@@ -46,6 +46,21 @@ const deskType = defineType({
       validation: (rule) => rule.required(),
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'id',
+      width: 'size.width',
+      height: 'size.height',
+    },
+
+    prepare({ title, width, height }) {
+      return {
+        title,
+        subtitle: `${width}x${height}`,
+      };
+    },
+  },
 });
 
 export default deskType;
