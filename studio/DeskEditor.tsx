@@ -36,38 +36,64 @@ type DeskSize = {
   height?: number;
 };
 
-type DragState = {
-  pointerId: number;
-  itemKey: string;
+type InteractionState =
+  | {
+      mode: 'move';
+      pointerId: number;
+      itemKey: string;
 
-  startMouseX: number;
-  startMouseY: number;
+      startMouseX: number;
+      startMouseY: number;
 
-  startItemX: number;
-  startItemY: number;
+      startItemX: number;
+      startItemY: number;
 
-  currentItemX: number;
-  currentItemY: number;
-};
+      currentItemX: number;
+      currentItemY: number;
+    }
+  | {
+      mode: 'resize';
+      pointerId: number;
+      itemKey: string;
+
+      startMouseX: number;
+      startMouseY: number;
+
+      startSize: number;
+      currentSize: number;
+    }
+  | {
+      mode: 'rotate';
+      pointerId: number;
+      itemKey: string;
+
+      centerScreenX: number;
+      centerScreenY: number;
+
+      startAngle: number;
+      startRotation: number;
+      currentRotation: number;
+    };
 
 const DeskEditor: UserViewComponent = ({ document, documentId }) => {
   const desk = document.displayed;
-  const schemaType = 'desk';
 
   /*
    * Sanity document operation.
    *
    * We will use this to patch the document when a drag finishes.
    */
-  const { patch } = useDocumentOperation(documentId, schemaType);
+  const { patch } = useDocumentOperation(documentId, 'desk');
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const dragRef = useRef<DragState | null>(null);
+  const interactionRef = useRef<InteractionState | null>(null);
 
   const [scale, setScale] = useState(1);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const [isDragging, setIsDragging] = useState(false);
 
   const [items, setItems] = useState<DeskItem[]>(() => {
     return (desk?.deskItems ?? []) as DeskItem[];
@@ -122,18 +148,20 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
     return <div>No desk data.</div>;
   }
 
-  const handlePointerDown = (
+  const handleMovePointerDown = (
     event: PointerEvent<HTMLDivElement>,
     item: DeskItem
   ) => {
     event.stopPropagation();
 
     setSelectedId(item.id ?? null);
+    setIsDragging(true);
 
     const itemX = item.position?.x ?? 0;
     const itemY = item.position?.y ?? 0;
 
-    dragRef.current = {
+    interactionRef.current = {
+      mode: 'move',
       pointerId: event.pointerId,
       itemKey: item._key,
 
@@ -150,80 +178,221 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
+  const handleResizePointerDown = (
+    event: PointerEvent<HTMLDivElement>,
+    item: DeskItem
+  ) => {
+    event.stopPropagation();
+
+    setSelectedId(item.id ?? null);
+
+    const itemSize = item.size ?? 100;
+
+    interactionRef.current = {
+      mode: 'resize',
+      pointerId: event.pointerId,
+      itemKey: item._key,
+
+      startMouseX: event.clientX,
+      startMouseY: event.clientY,
+
+      startSize: itemSize,
+      currentSize: itemSize,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const handleRotatePointerDown = (
+    event: PointerEvent<HTMLDivElement>,
+    item: DeskItem
+  ) => {
+    event.stopPropagation();
+
+    setSelectedId(item.id ?? null);
+
+    const itemX = item.position?.x ?? 0;
+    const itemY = item.position?.y ?? 0;
+
+    /*
+     * The Desk itself is scaled with CSS, so convert the item's
+     * logical Desk coordinates back into screen coordinates.
+     */
+    const desk = containerRef.current?.querySelector(
+      '[data-desk-canvas]'
+    ) as HTMLDivElement | null;
+
+    if (!desk) {
+      return;
+    }
+
+    const deskRect = desk.getBoundingClientRect();
+
+    const centerScreenX = deskRect.left + itemX * scale;
+
+    const centerScreenY = deskRect.top + itemY * scale;
+
+    const startAngle = Math.atan2(
+      event.clientY - centerScreenY,
+      event.clientX - centerScreenX
+    );
+
+    interactionRef.current = {
+      mode: 'rotate',
+      pointerId: event.pointerId,
+      itemKey: item._key,
+
+      centerScreenX,
+      centerScreenY,
+
+      startAngle,
+      startRotation: item.rotation ?? 0,
+      currentRotation: item.rotation ?? 0,
+    };
+
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
   const handlePointerMove = (
     event: PointerEvent<HTMLDivElement>,
     item: DeskItem
   ) => {
-    const drag = dragRef.current;
+    const interaction = interactionRef.current;
 
-    if (!drag) {
+    if (!interaction) {
       return;
     }
 
-    if (drag.pointerId !== event.pointerId) {
+    if (interaction.pointerId !== event.pointerId) {
       return;
     }
 
-    if (drag.itemKey !== item._key) {
+    if (interaction.itemKey !== item._key) {
       return;
     }
 
-    /*
-     * Convert screen-space movement into Desk-space movement.
-     *
-     * Example:
-     *
-     * scale = 0.5
-     * mouse moved 50px
-     *
-     * Desk movement = 50 / 0.5 = 100
-     */
-    const deltaX = (event.clientX - drag.startMouseX) / scale;
+    if (interaction.mode === 'move') {
+      const deltaX = (event.clientX - interaction.startMouseX) / scale;
 
-    const deltaY = (event.clientY - drag.startMouseY) / scale;
+      const deltaY = (event.clientY - interaction.startMouseY) / scale;
 
-    const newX = Math.round(drag.startItemX + deltaX);
-    const newY = Math.round(drag.startItemY + deltaY);
+      const newX = Math.round(interaction.startItemX + deltaX);
+      const newY = Math.round(interaction.startItemY + deltaY);
 
-    drag.currentItemX = newX;
-    drag.currentItemY = newY;
+      interaction.currentItemX = newX;
+      interaction.currentItemY = newY;
 
-    /*
-     * Update ONLY local state while dragging.
-     *
-     * No Sanity mutation happens here.
-     */
-    setItems((currentItems) =>
-      currentItems.map((currentItem) => {
-        if (currentItem._key !== drag.itemKey) {
-          return currentItem;
-        }
+      setItems((currentItems) =>
+        currentItems.map((currentItem) => {
+          if (currentItem._key !== interaction.itemKey) {
+            return currentItem;
+          }
 
-        return {
-          ...currentItem,
+          return {
+            ...currentItem,
 
-          position: {
-            ...(currentItem.position ?? {}),
-            x: newX,
-            y: newY,
-          },
-        };
-      })
-    );
+            position: {
+              ...(currentItem.position ?? {}),
+              x: newX,
+              y: newY,
+            },
+          };
+        })
+      );
+
+      return;
+    }
+
+    if (interaction.mode === 'resize') {
+      /*
+       * The resize handle sits on the bottom-right corner.
+       * Measuring from the item's center gives us a uniform
+       * square resize regardless of the item's rotation.
+       */
+      const itemX = item.position?.x ?? 0;
+      const itemY = item.position?.y ?? 0;
+
+      const desk = containerRef.current?.querySelector(
+        '[data-desk-canvas]'
+      ) as HTMLDivElement | null;
+
+      if (!desk) {
+        return;
+      }
+
+      const deskRect = desk.getBoundingClientRect();
+
+      const centerScreenX = deskRect.left + itemX * scale;
+
+      const centerScreenY = deskRect.top + itemY * scale;
+
+      const dx = event.clientX - centerScreenX;
+      const dy = event.clientY - centerScreenY;
+
+      const newSize = Math.max(
+        20,
+        Math.round((Math.sqrt(dx * dx + dy * dy) * Math.sqrt(2)) / scale)
+      );
+
+      interaction.currentSize = newSize;
+
+      setItems((currentItems) =>
+        currentItems.map((currentItem) => {
+          if (currentItem._key !== interaction.itemKey) {
+            return currentItem;
+          }
+
+          return {
+            ...currentItem,
+            size: newSize,
+          };
+        })
+      );
+
+      return;
+    }
+
+    if (interaction.mode === 'rotate') {
+      const currentAngle = Math.atan2(
+        event.clientY - interaction.centerScreenY,
+        event.clientX - interaction.centerScreenX
+      );
+
+      const deltaAngle =
+        ((currentAngle - interaction.startAngle) * 180) / Math.PI;
+
+      const newRotation = Math.round(interaction.startRotation + deltaAngle);
+
+      interaction.currentRotation = newRotation;
+
+      setItems((currentItems) =>
+        currentItems.map((currentItem) => {
+          if (currentItem._key !== interaction.itemKey) {
+            return currentItem;
+          }
+
+          return {
+            ...currentItem,
+            rotation: newRotation,
+          };
+        })
+      );
+    }
   };
 
   const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current;
+    const interaction = interactionRef.current;
 
-    if (!drag) {
+    if (!interaction) {
       return;
     }
 
-    if (drag.pointerId !== event.pointerId) {
+    if (interaction.pointerId !== event.pointerId) {
       return;
     }
 
-    dragRef.current = null;
+    interactionRef.current = null;
+    setIsDragging(false);
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
@@ -233,17 +402,44 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
       return;
     }
 
-    const x = drag.currentItemX;
-    const y = drag.currentItemY;
-
-    patch.execute([
-      {
-        set: {
-          [`deskItems[_key=="${drag.itemKey}"].position.x`]: x,
-          [`deskItems[_key=="${drag.itemKey}"].position.y`]: y,
+    if (interaction.mode === 'move') {
+      patch.execute([
+        {
+          set: {
+            [`deskItems[_key=="${interaction.itemKey}"].position.x`]:
+              interaction.currentItemX,
+            [`deskItems[_key=="${interaction.itemKey}"].position.y`]:
+              interaction.currentItemY,
+          },
         },
-      },
-    ]);
+      ]);
+
+      return;
+    }
+
+    if (interaction.mode === 'resize') {
+      patch.execute([
+        {
+          set: {
+            [`deskItems[_key=="${interaction.itemKey}"].size`]:
+              interaction.currentSize,
+          },
+        },
+      ]);
+
+      return;
+    }
+
+    if (interaction.mode === 'rotate') {
+      patch.execute([
+        {
+          set: {
+            [`deskItems[_key=="${interaction.itemKey}"].rotation`]:
+              interaction.currentRotation,
+          },
+        },
+      ]);
+    }
   };
 
   return (
@@ -280,6 +476,8 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
 
           backgroundRepeat: 'repeat',
         }}
+
+        data-desk-canvas
       >
         {items.map((item) => {
           const itemSize = item.size ?? 100;
@@ -290,7 +488,7 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
             <div
               key={item._key}
 
-              onPointerDown={(event) => handlePointerDown(event, item)}
+              onPointerDown={(event) => handleMovePointerDown(event, item)}
 
               onPointerMove={(event) => handlePointerMove(event, item)}
 
@@ -307,10 +505,9 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
                 width: itemSize,
                 height: itemSize,
 
-                transform:
-                  `translate(-50%, -50%) ` + `rotate(${item.rotation ?? 0}deg)`,
+                transform: `translate(-50%, -50%) rotate(${item.rotation ?? 0}deg)`,
 
-                cursor: 'grab',
+                cursor: isDragging ? 'grabbing' : 'grab',
 
                 userSelect: 'none',
                 touchAction: 'none',
@@ -357,6 +554,74 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
                 >
                   {item.id}
                 </div>
+              )}
+
+              {isSelected && (
+                <>
+                  {/* Rotation handle */}
+                  <div
+                    onPointerDown={(event) =>
+                      handleRotatePointerDown(event, item)
+                    }
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: -28,
+
+                      width: 12,
+                      height: 12,
+
+                      transform: 'translateX(-50%)',
+
+                      border: '2px solid #2276fc',
+                      borderRadius: '50%',
+                      background: '#fff',
+
+                      cursor: 'pointer',
+                      boxSizing: 'border-box',
+                      touchAction: 'none',
+                    }}
+                  />
+
+                  {/* Rotation stem */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: '50%',
+                      top: -16,
+
+                      width: 2,
+                      height: 16,
+
+                      transform: 'translateX(-50%)',
+
+                      background: '#2276fc',
+                      pointerEvents: 'none',
+                    }}
+                  />
+
+                  {/* Resize handle */}
+                  <div
+                    onPointerDown={(event) =>
+                      handleResizePointerDown(event, item)
+                    }
+                    style={{
+                      position: 'absolute',
+                      right: -7,
+                      bottom: -7,
+
+                      width: 14,
+                      height: 14,
+
+                      border: '2px solid #2276fc',
+                      background: '#fff',
+
+                      cursor: 'nwse-resize',
+                      boxSizing: 'border-box',
+                      touchAction: 'none',
+                    }}
+                  />
+                </>
               )}
             </div>
           );
