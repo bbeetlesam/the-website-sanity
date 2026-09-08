@@ -50,6 +50,15 @@ const navItemType = defineType({
         }),
       ],
     }),
+
+    // The order of the Nav item in the navigation menu
+    defineField({
+      name: 'navOrder',
+      title: 'Order',
+      description: 'Order of the Nav item in the navigation menu.',
+      type: 'number',
+      validation: (rule) => rule.required(),
+    }),
   ],
 
   preview: {
