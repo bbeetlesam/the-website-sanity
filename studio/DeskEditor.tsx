@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent } from 'react';
+import { useDocumentOperation } from 'sanity';
 import type { UserViewComponent } from 'sanity/structure';
 import {
   createImageUrlBuilder,
@@ -43,21 +45,33 @@ type DragState = {
 
   startItemX: number;
   startItemY: number;
+
+  currentItemX: number;
+  currentItemY: number;
 };
 
-const DeskEditor: UserViewComponent = ({ document }) => {
+const DeskEditor: UserViewComponent = ({ document, documentId }) => {
   const desk = document.displayed;
+  const schemaType = 'desk';
+
+  /*
+   * Sanity document operation.
+   *
+   * We will use this to patch the document when a drag finishes.
+   */
+  const { patch } = useDocumentOperation(documentId, schemaType);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const dragRef = useRef<DragState | null>(null);
+
   const [scale, setScale] = useState(1);
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const [items, setItems] = useState<DeskItem[]>(() => {
     return (desk?.deskItems ?? []) as DeskItem[];
   });
-
-  const dragRef = useRef<DragState | null>(null);
 
   const size = desk?.size as DeskSize | undefined;
 
@@ -65,16 +79,18 @@ const DeskEditor: UserViewComponent = ({ document }) => {
   const deskHeight = size?.height ?? 720;
 
   /*
-   * Keep the local editor state in sync when the document itself
-   * changes from outside the editor.
+   * Keep the local editor state synchronized with Sanity.
+   *
+   * This means that once our patch is committed, the updated
+   * document comes back through document.displayed and refreshes
+   * our local state.
    */
   useEffect(() => {
     setItems((desk?.deskItems ?? []) as DeskItem[]);
   }, [desk?.deskItems]);
 
   /*
-   * Calculate the scale required to fit the logical Desk inside
-   * the available Studio view.
+   * Scale the logical Desk to fit the available Studio area.
    */
   useEffect(() => {
     const container = containerRef.current;
@@ -107,7 +123,7 @@ const DeskEditor: UserViewComponent = ({ document }) => {
   }
 
   const handlePointerDown = (
-    event: React.PointerEvent<HTMLDivElement>,
+    event: PointerEvent<HTMLDivElement>,
     item: DeskItem
   ) => {
     event.stopPropagation();
@@ -126,13 +142,16 @@ const DeskEditor: UserViewComponent = ({ document }) => {
 
       startItemX: itemX,
       startItemY: itemY,
+
+      currentItemX: itemX,
+      currentItemY: itemY,
     };
 
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
   const handlePointerMove = (
-    event: React.PointerEvent<HTMLDivElement>,
+    event: PointerEvent<HTMLDivElement>,
     item: DeskItem
   ) => {
     const drag = dragRef.current;
@@ -150,18 +169,30 @@ const DeskEditor: UserViewComponent = ({ document }) => {
     }
 
     /*
-     * clientX/clientY are screen coordinates.
+     * Convert screen-space movement into Desk-space movement.
      *
-     * The Desk itself may be scaled, so convert the mouse movement
-     * back into the Desk's logical coordinate system.
+     * Example:
+     *
+     * scale = 0.5
+     * mouse moved 50px
+     *
+     * Desk movement = 50 / 0.5 = 100
      */
     const deltaX = (event.clientX - drag.startMouseX) / scale;
 
     const deltaY = (event.clientY - drag.startMouseY) / scale;
 
-    const newX = drag.startItemX + deltaX;
-    const newY = drag.startItemY + deltaY;
+    const newX = Math.round(drag.startItemX + deltaX);
+    const newY = Math.round(drag.startItemY + deltaY);
 
+    drag.currentItemX = newX;
+    drag.currentItemY = newY;
+
+    /*
+     * Update ONLY local state while dragging.
+     *
+     * No Sanity mutation happens here.
+     */
     setItems((currentItems) =>
       currentItems.map((currentItem) => {
         if (currentItem._key !== drag.itemKey) {
@@ -181,7 +212,7 @@ const DeskEditor: UserViewComponent = ({ document }) => {
     );
   };
 
-  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+  const handlePointerUp = (event: PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current;
 
     if (!drag) {
@@ -197,6 +228,22 @@ const DeskEditor: UserViewComponent = ({ document }) => {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
+
+    if (patch.disabled) {
+      return;
+    }
+
+    const x = drag.currentItemX;
+    const y = drag.currentItemY;
+
+    patch.execute([
+      {
+        set: {
+          [`deskItems[_key=="${drag.itemKey}"].position.x`]: x,
+          [`deskItems[_key=="${drag.itemKey}"].position.y`]: y,
+        },
+      },
+    ]);
   };
 
   return (
