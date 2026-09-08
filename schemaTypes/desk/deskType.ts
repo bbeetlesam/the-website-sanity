@@ -11,7 +11,13 @@ const deskType = defineType({
       name: 'id',
       title: 'ID',
       type: 'string',
-      validation: (rule) => rule.required(),
+      validation: (rule) => [
+        rule.required().error('Desk ID is required, mate.'),
+        rule
+          // A Desk ID must follow the format d{number}_{number}
+          .regex(/^d[1-9]\d*_[1-9]\d*$/, { name: 'Desk ID' })
+          .error('Um, Desk ID must follow the format d{number}_{number}.'),
+      ],
     }),
 
     // Size of the Desk
