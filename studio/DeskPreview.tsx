@@ -113,7 +113,7 @@ const DeskPreview: UserViewComponent = ({ document }) => {
                 top: item.position?.y ?? 0,
                 width: itemSize,
                 height: itemSize,
-                transform: `rotate(${item.rotation ?? 0}deg) translate(-50%, -50%)`,
+                transform: `translate(-50%, -50%) rotate(${item.rotation ?? 0}deg)`,
               }}
             >
               {item.icon ? (
