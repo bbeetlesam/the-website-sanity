@@ -51,6 +51,14 @@ const navItemType = defineType({
       ],
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'desc',
+      media: 'icon.white',
+    },
+  },
 });
 
 export default navItemType;
