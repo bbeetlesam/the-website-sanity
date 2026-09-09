@@ -6,12 +6,21 @@ import { media } from 'sanity-plugin-media';
 
 import { defaultDocumentNode } from './studio/structure';
 
+if (
+  !process.env.SANITY_STUDIO_PROJECT_ID ||
+  !process.env.SANITY_STUDIO_DATASET
+) {
+  throw new Error(
+    'Missing SANITY_STUDIO_PROJECT_ID or SANITY_STUDIO_DATASET environment variables!'
+  );
+}
+
 export default defineConfig({
   name: 'default',
   title: 'sam-website',
 
-  projectId: '55meutke',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID,
+  dataset: process.env.SANITY_STUDIO_DATASET,
 
   plugins: [structureTool({ defaultDocumentNode }), media(), visionTool()],
 

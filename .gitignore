@@ -28,5 +28,11 @@
 # Dotenv and similar local-only files
 *.local
 
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
 # Misc
 .zed/
