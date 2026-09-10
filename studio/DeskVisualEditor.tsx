@@ -8,8 +8,8 @@ import {
 } from '@sanity/image-url';
 
 const imageBuilder = createImageUrlBuilder({
-  projectId: '55meutke',
-  dataset: 'production',
+  projectId: process.env.SANITY_STUDIO_PROJECT_ID!,
+  dataset: process.env.SANITY_STUDIO_DATASET!,
 });
 
 const urlFor = (source: SanityImageSource) => {
