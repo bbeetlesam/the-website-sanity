@@ -40,12 +40,14 @@ const deskItemType = defineType({
           name: 'x',
           title: 'X',
           type: 'number',
+          validation: (rule) => rule.required(),
         }),
 
         defineField({
           name: 'y',
           title: 'Y',
           type: 'number',
+          validation: (rule) => rule.required(),
         }),
       ],
     }),
