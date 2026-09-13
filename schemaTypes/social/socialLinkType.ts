@@ -37,7 +37,15 @@ const socialLinkType = defineType({
     defineField({
       name: 'icon',
       title: 'Image Icon',
-      type: 'image',
+      type: 'icon',
+      validation: (rule) => rule.required(),
+    }),
+
+    // The order of the Social Link
+    defineField({
+      name: 'order',
+      title: 'Order',
+      type: 'number',
       validation: (rule) => rule.required(),
     }),
   ],
@@ -46,7 +54,7 @@ const socialLinkType = defineType({
     select: {
       title: 'id',
       subtitle: 'title',
-      media: 'icon',
+      media: 'icon.default',
     },
   },
 });

@@ -4,12 +4,17 @@ import navItemType from './navigation/navItemType';
 import deskItemType from './desk/deskItemType';
 import deskType from './desk/deskType';
 import socialLinkType from './social/socialLinkType';
+import iconType from './objects/iconType';
 
 export const schemaTypes = [
+  // Documents
   blogType,
   authorType,
   navItemType,
-  deskItemType,
   deskType,
   socialLinkType,
+
+  // Objects
+  deskItemType,
+  iconType,
 ];
