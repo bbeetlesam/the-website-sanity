@@ -5,6 +5,7 @@ import deskItemType from './desk/deskItemType';
 import deskType from './desk/deskType';
 import socialLinkType from './social/socialLinkType';
 import iconType from './objects/iconType';
+import typefaceType from './filetype/typefaceType';
 
 export const schemaTypes = [
   // Documents
@@ -13,6 +14,7 @@ export const schemaTypes = [
   navItemType,
   deskType,
   socialLinkType,
+  typefaceType,
 
   // Objects
   deskItemType,
