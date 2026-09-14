@@ -34,21 +34,8 @@ const navItemType = defineType({
     defineField({
       name: 'icon',
       title: 'Image Icon',
-      type: 'object',
+      type: 'icon',
       validation: (rule) => rule.required(),
-      fields: [
-        defineField({
-          name: 'white',
-          title: 'White Variant',
-          type: 'image',
-        }),
-
-        defineField({
-          name: 'black',
-          title: 'Black Variant',
-          type: 'image',
-        }),
-      ],
     }),
 
     // The order of the Nav item in the navigation menu
@@ -65,7 +52,7 @@ const navItemType = defineType({
     select: {
       title: 'title',
       subtitle: 'desc',
-      media: 'icon.white',
+      media: 'icon.default',
     },
   },
 });
