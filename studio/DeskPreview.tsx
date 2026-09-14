@@ -60,7 +60,10 @@ const DeskPreview: UserViewComponent = ({ document }) => {
 
   const deskItems = (desk.deskItems ?? []) as Array<{
     id?: string;
-    icon?: SanityImageSource;
+    icon: {
+      default: SanityImageSource;
+      active?: SanityImageSource;
+    };
     imageAlt?: string;
 
     position?: {
@@ -118,7 +121,7 @@ const DeskPreview: UserViewComponent = ({ document }) => {
             >
               {item.icon ? (
                 <img
-                  src={urlFor(item.icon)
+                  src={urlFor(item.icon.default)
                     .width(itemSize)
                     .height(itemSize)
                     .fit('max')

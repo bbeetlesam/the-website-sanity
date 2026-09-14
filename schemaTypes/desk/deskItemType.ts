@@ -18,7 +18,7 @@ const deskItemType = defineType({
     defineField({
       name: 'icon',
       title: 'Image Icon',
-      type: 'image',
+      type: 'icon',
       validation: (rule) => rule.required(),
     }),
 
@@ -66,6 +66,14 @@ const deskItemType = defineType({
       type: 'number',
     }),
 
+    // Navigation configuration for the Desk item
+    defineField({
+      name: 'navigation',
+      title: 'Navigation',
+      type: 'reference',
+      to: [{ type: 'nav-item' }],
+    }),
+
     // Focus Frame configuration for the Desk item
     defineField({
       name: 'focusFrame',
@@ -96,14 +104,6 @@ const deskItemType = defineType({
           type: 'number',
         }),
       ],
-    }),
-
-    // Navigation configuration for the Desk item
-    defineField({
-      name: 'navigation',
-      title: 'Navigation',
-      type: 'reference',
-      to: [{ type: 'nav-item' }],
     }),
   ],
 });

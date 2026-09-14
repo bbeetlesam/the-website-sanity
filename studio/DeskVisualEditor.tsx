@@ -19,7 +19,10 @@ const urlFor = (source: SanityImageSource) => {
 type DeskItem = {
   _key: string;
   id?: string;
-  icon?: SanityImageSource;
+  icon: {
+    default: SanityImageSource;
+    active?: SanityImageSource;
+  };
   imageAlt?: string;
 
   position?: {
@@ -519,7 +522,7 @@ const DeskEditor: UserViewComponent = ({ document, documentId }) => {
             >
               {item.icon ? (
                 <img
-                  src={urlFor(item.icon)
+                  src={urlFor(item.icon.default)
                     .width(itemSize)
                     .height(itemSize)
                     .fit('max')
