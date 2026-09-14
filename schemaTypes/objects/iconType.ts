@@ -16,7 +16,6 @@ const iconType = defineType({
       name: 'active',
       title: 'Active Variant',
       type: 'image',
-      validation: (rule) => rule.required(),
     }),
   ],
 });
