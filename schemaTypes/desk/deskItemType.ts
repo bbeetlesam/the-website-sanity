@@ -33,23 +33,7 @@ const deskItemType = defineType({
     defineField({
       name: 'position',
       title: 'Position',
-      type: 'object',
-      validation: (rule) => rule.required(),
-      fields: [
-        defineField({
-          name: 'x',
-          title: 'X',
-          type: 'number',
-          validation: (rule) => rule.required(),
-        }),
-
-        defineField({
-          name: 'y',
-          title: 'Y',
-          type: 'number',
-          validation: (rule) => rule.required(),
-        }),
-      ],
+      type: 'position',
     }),
 
     // The size in pixels of the Desk item
