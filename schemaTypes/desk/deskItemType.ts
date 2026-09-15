@@ -66,6 +66,7 @@ const deskItemType = defineType({
       title: 'Interaction Effect',
       type: 'string',
       description: 'The effect to apply when the Desk Item is interacted with.',
+      initialValue: 'none',
       options: {
         list: [
           { title: 'None', value: 'none' },

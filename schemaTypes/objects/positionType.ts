@@ -10,6 +10,7 @@ const positionType = defineType({
       name: 'x',
       title: 'X',
       type: 'number',
+      initialValue: 0,
       validation: (rule) => rule.required(),
     }),
 
@@ -17,6 +18,7 @@ const positionType = defineType({
       name: 'y',
       title: 'Y',
       type: 'number',
+      initialValue: 0,
       validation: (rule) => rule.required(),
     }),
   ],

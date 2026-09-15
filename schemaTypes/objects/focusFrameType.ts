@@ -12,6 +12,7 @@ const focusFrameType = defineType({
       description:
         "The size of the focus frame as a percentage relative to the item's size.",
       type: 'number',
+      initialValue: 100,
       validation: (rule) =>
         rule.positive().error('Size must be a positive percentage.'),
     }),
@@ -21,6 +22,7 @@ const focusFrameType = defineType({
       title: 'Corner Size',
       description: "The size of the focus frame's corner.",
       type: 'number',
+      initialValue: 20,
     }),
 
     defineField({
@@ -28,6 +30,7 @@ const focusFrameType = defineType({
       title: 'Corner Thickness',
       description: "The thickness of the focus frame's corner.",
       type: 'number',
+      initialValue: 3,
     }),
 
     defineField({
@@ -36,6 +39,7 @@ const focusFrameType = defineType({
       description:
         'The offset of the focus drawing from the canvas edge of the item.',
       type: 'number',
+      initialValue: 0,
     }),
   ],
 });
