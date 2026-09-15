@@ -12,3 +12,12 @@ minimumReleaseAgeExclude:
   - '@sanity/vision@6.13.0'
   - get-it@9.5.4
   - sanity@6.13.0
+  - '@sanity/access-ui@6.13.1'
+  - '@sanity/diff@6.13.1'
+  - '@sanity/mutator@6.13.1'
+  - '@sanity/schema@6.13.1'
+  - '@sanity/types@6.13.1'
+  - '@sanity/util@6.13.1'
+  - '@sanity/validation@6.13.1'
+  - '@sanity/vision@6.13.1'
+  - sanity@6.13.1
