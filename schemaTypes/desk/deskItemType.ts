@@ -60,11 +60,29 @@ const deskItemType = defineType({
       to: [{ type: 'nav-item' }],
     }),
 
+    // Active behaviour of the navigable Desk item when interacted (hovered, clicked, etc)
+    defineField({
+      name: 'interactionEffect',
+      title: 'Interaction Effect',
+      type: 'string',
+      description: 'The effect to apply when the Desk Item is interacted with.',
+      options: {
+        list: [
+          { title: 'None', value: 'none' },
+          { title: 'Focus Frame', value: 'focus-frame' },
+        ],
+      },
+      hidden: ({ parent }) => !parent?.navigation,
+    }),
+
     // Focus Frame configuration for the Desk item
+    // (ONLY IF interactionEffect is 'focus-frame' and navigation is set)
     defineField({
       name: 'focusFrame',
       title: 'Focus Frame',
       type: 'focus-frame',
+      hidden: ({ parent }) =>
+        !parent?.navigation || parent?.interactionEffect !== 'focus-frame',
     }),
   ],
 });
