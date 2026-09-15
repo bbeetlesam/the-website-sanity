@@ -57,6 +57,8 @@ const deskItemType = defineType({
       name: 'size',
       title: 'Size',
       type: 'number',
+      validation: (rule) =>
+        rule.positive().error('Size must be a positive number.'),
     }),
 
     // The rotation angle in degree of the Desk item
@@ -78,32 +80,7 @@ const deskItemType = defineType({
     defineField({
       name: 'focusFrame',
       title: 'Focus Frame',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'size',
-          title: 'Size',
-          type: 'number',
-        }),
-
-        defineField({
-          name: 'cornerSize',
-          title: 'Corner Size',
-          type: 'number',
-        }),
-
-        defineField({
-          name: 'cornerThickness',
-          title: 'Corner Thickness',
-          type: 'number',
-        }),
-
-        defineField({
-          name: 'edgeOffset',
-          title: 'Edge Offset',
-          type: 'number',
-        }),
-      ],
+      type: 'focus-frame',
     }),
   ],
 });

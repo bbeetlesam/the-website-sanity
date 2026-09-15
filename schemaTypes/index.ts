@@ -6,6 +6,7 @@ import deskType from './desk/deskType';
 import socialLinkType from './social/socialLinkType';
 import iconType from './objects/iconType';
 import typefaceType from './filetype/typefaceType';
+import focusFrameType from './objects/focusFrameType';
 
 export const schemaTypes = [
   // Documents
@@ -19,4 +20,5 @@ export const schemaTypes = [
   // Objects
   deskItemType,
   iconType,
+  focusFrameType,
 ];
