@@ -57,7 +57,7 @@ const deskItemType = defineType({
       name: 'navigation',
       title: 'Navigation',
       type: 'reference',
-      to: [{ type: 'nav-item' }],
+      to: [{ type: 'nav-item' }, { type: 'social-link' }],
     }),
 
     // Active behaviour of the navigable Desk item when interacted (hovered, clicked, etc)
