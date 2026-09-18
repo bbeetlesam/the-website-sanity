@@ -41,8 +41,9 @@ const deskItemType = defineType({
       name: 'size',
       title: 'Size',
       type: 'number',
+      initialValue: 100,
       validation: (rule) =>
-        rule.positive().error('Size must be a positive number.'),
+        rule.required().positive().error('Size must be a positive number.'),
     }),
 
     // The rotation angle in degree of the Desk item
@@ -50,6 +51,7 @@ const deskItemType = defineType({
       name: 'rotation',
       title: 'Rotation',
       type: 'number',
+      initialValue: 0,
     }),
 
     // Navigation configuration for the Desk item
