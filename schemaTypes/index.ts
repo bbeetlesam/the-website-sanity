@@ -8,14 +8,15 @@ import iconType from './objects/iconType';
 import typefaceType from './filetype/typefaceType';
 import focusFrameType from './objects/focusFrameType';
 import positionType from './objects/positionType';
+import { fontType } from './objects/fontVariantType';
 
 export const schemaTypes = [
   // Documents
+  deskType,
+  pageLinkType,
+  externalLinkType,
   blogType,
   authorType,
-  pageLinkType,
-  deskType,
-  externalLinkType,
   typefaceType,
 
   // Objects
@@ -23,4 +24,5 @@ export const schemaTypes = [
   iconType,
   focusFrameType,
   positionType,
+  fontType,
 ];
