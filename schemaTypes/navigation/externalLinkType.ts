@@ -1,12 +1,12 @@
 import { defineField, defineType } from 'sanity';
 
-const socialLinkType = defineType({
-  name: 'social-link',
-  title: 'Social Link',
+const externalLinkType = defineType({
+  name: 'social-link', // will later changed to 'external-link'
+  title: 'External Link',
   type: 'document',
 
   fields: [
-    // A unique identifier for the Social Link
+    // A unique identifier for the External Link
     defineField({
       name: 'id',
       title: 'ID',
@@ -14,7 +14,7 @@ const socialLinkType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // The href url link for the Social Link
+    // The href url link for the External Link
     defineField({
       name: 'href',
       title: 'Href URL',
@@ -25,7 +25,7 @@ const socialLinkType = defineType({
         }),
     }),
 
-    // The title to represents the Social Link
+    // The title to represents the External Link
     defineField({
       name: 'title',
       title: 'Link Title',
@@ -33,7 +33,7 @@ const socialLinkType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // The icon to represents the Social Link
+    // The icon to represents the External Link
     defineField({
       name: 'icon',
       title: 'Image Icon',
@@ -41,7 +41,7 @@ const socialLinkType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // The order of the Social Link
+    // The order of the External Link
     defineField({
       name: 'order',
       title: 'Order',
@@ -59,4 +59,4 @@ const socialLinkType = defineType({
   },
 });
 
-export default socialLinkType;
+export default externalLinkType;

@@ -1,12 +1,12 @@
 import { defineField, defineType } from 'sanity';
 
-const navItemType = defineType({
-  name: 'nav-item',
-  title: 'Navigation Item',
+const pageLinkType = defineType({
+  name: 'nav-item', // will later changed to 'page-link'
+  title: 'Page Link',
   type: 'document',
 
   fields: [
-    // A unique identifier for each Nav item
+    // A unique identifier for each Page Link
     defineField({
       name: 'id',
       title: 'ID',
@@ -14,7 +14,7 @@ const navItemType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // Representative title for the Nav item
+    // Representative title for the Page Link
     defineField({
       name: 'title',
       title: 'Title',
@@ -22,7 +22,7 @@ const navItemType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // Description of the Nav item (longer 'title')
+    // Description of the Page Link (longer 'title')
     defineField({
       name: 'desc',
       title: 'Description',
@@ -30,7 +30,7 @@ const navItemType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // Icon variants for the Nav item
+    // Icon variants for the Page Link
     defineField({
       name: 'icon',
       title: 'Image Icon',
@@ -38,7 +38,7 @@ const navItemType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // The order of the Nav item in the navigation menu
+    // The order of the Page Link in the navigation menu
     defineField({
       name: 'navOrder',
       title: 'Order',
@@ -57,4 +57,4 @@ const navItemType = defineType({
   },
 });
 
-export default navItemType;
+export default pageLinkType;
