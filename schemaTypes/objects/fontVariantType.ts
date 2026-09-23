@@ -1,6 +1,6 @@
 import { defineField, defineType } from 'sanity';
 
-export const fontType = defineType({
+const fontType = defineType({
   name: 'font',
   title: 'Font',
   type: 'object',
@@ -76,3 +76,5 @@ export const fontType = defineType({
     }),
   ],
 });
+
+export default fontType;
