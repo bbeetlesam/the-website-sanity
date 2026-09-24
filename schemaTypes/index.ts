@@ -9,6 +9,7 @@ import typefaceType from './filetype/typefaceType';
 import focusFrameType from './objects/focusFrameType';
 import positionType from './objects/positionType';
 import fontType from './objects/fontVariantType';
+import iconAssetType from './filetype/iconAssetType';
 
 export const schemaTypes = [
   // Documents
@@ -18,6 +19,7 @@ export const schemaTypes = [
   blogType,
   authorType,
   typefaceType,
+  iconAssetType,
 
   // Objects
   deskItemType,
