@@ -76,22 +76,26 @@ const typefaceType = defineType({
   preview: {
     select: {
       title: 'name',
-      variantsType: 'variantsType',
       staticFonts: 'staticFonts',
       variableFonts: 'variableFonts',
     },
 
-    prepare({ title, variantsType, staticFonts, variableFonts }) {
+    prepare({ title, staticFonts, variableFonts }) {
+      const variantGroups = [
+        staticFonts?.length
+          ? `Static: ${staticFonts.map((variant) => variant.name).join(', ')}`
+          : null,
+
+        variableFonts?.length
+          ? `Variable: ${variableFonts.map((variant) => variant.name).join(', ')}`
+          : null,
+      ].filter(Boolean);
+
       return {
-        title: `${title} (${variantsType})`,
-        subtitle:
-          staticFonts
-            ?.map((variant: { name: string }) => variant.name)
-            .join(', ') || 'No variants yet...',
-        description:
-          variableFonts
-            ?.map((font: { name: string }) => font.name)
-            .join(', ') || 'No variable fonts yet...',
+        title: `${title}`,
+        subtitle: variantGroups.length
+          ? variantGroups.join(' | ')
+          : 'No variants yet...',
       };
     },
   },
