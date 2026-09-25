@@ -59,7 +59,7 @@ const deskItemType = defineType({
       name: 'navigation',
       title: 'Navigation',
       type: 'reference',
-      to: [{ type: 'nav-item' }, { type: 'social-link' }],
+      to: [{ type: 'page-link' }, { type: 'social-link' }],
     }),
 
     // Active behaviour of the navigable Desk item when interacted (hovered, clicked, etc)
@@ -68,13 +68,14 @@ const deskItemType = defineType({
       title: 'Interaction Effect',
       type: 'string',
       description: 'The effect to apply when the Desk Item is interacted with.',
-      initialValue: 'none',
       options: {
         list: [
           { title: 'None', value: 'none' },
           { title: 'Focus Frame', value: 'focus-frame' },
         ],
+        layout: 'radio',
       },
+      initialValue: 'none',
       hidden: ({ parent }) => !parent?.navigation,
     }),
 

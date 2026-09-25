@@ -1,7 +1,7 @@
 import { defineField, defineType } from 'sanity';
 
 const pageLinkType = defineType({
-  name: 'nav-item', // will later changed to 'page-link'
+  name: 'page-link',
   title: 'Page Link',
   type: 'document',
 
@@ -42,7 +42,7 @@ const pageLinkType = defineType({
     defineField({
       name: 'navOrder',
       title: 'Order',
-      description: 'Order of the Nav item in the navigation menu.',
+      description: "Order of the Page Link(s) in the frontend's navigation menu.",
       type: 'number',
       validation: (rule) => rule.required(),
     }),
