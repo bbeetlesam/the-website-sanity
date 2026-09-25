@@ -1,12 +1,12 @@
 import { defineField, defineType } from 'sanity';
 
-const fontType = defineType({
-  name: 'font',
-  title: 'Font',
+const variableFontType = defineType({
+  name: 'variable-font',
+  title: 'Variable Font',
   type: 'object',
 
   fields: [
-    /** Name of the variant */
+    /** Name of the variable font */
     defineField({
       name: 'name',
       title: 'Variant Name',
@@ -14,12 +14,12 @@ const fontType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    /** Weight of the variant */
+    /** Min weight of the variable font */
     defineField({
-      name: 'weight',
-      title: 'Weight',
+      name: 'minWeight',
+      title: 'Min Weight',
       type: 'number',
-      initialValue: 400,
+      initialValue: 100,
       validation: (rule) =>
         rule
           .required()
@@ -33,7 +33,26 @@ const fontType = defineType({
           ),
     }),
 
-    /** Style of the variant */
+    /** Max weight of the variable font */
+    defineField({
+      name: 'maxWeight',
+      title: 'Max Weight',
+      type: 'number',
+      initialValue: 900,
+      validation: (rule) =>
+        rule
+          .required()
+          .integer()
+          .min(100)
+          .max(900)
+          .custom((value) =>
+            (value ?? 0) % 100 === 0
+              ? true
+              : 'Weight must be a multiple of 100 :3'
+          ),
+    }),
+
+    /** Style of the variable font */
     defineField({
       name: 'style',
       title: 'Style',
@@ -43,12 +62,14 @@ const fontType = defineType({
           { title: 'Normal', value: 'normal' },
           { title: 'Italic', value: 'italic' },
         ],
+        layout: 'radio',
+        direction: 'horizontal',
       },
       initialValue: 'normal',
       validation: (rule) => rule.required(),
     }),
 
-    /** Font file of the variant */
+    /** Font file of the variable font */
     defineField({
       name: 'file',
       title: 'Font file',
@@ -59,7 +80,7 @@ const fontType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    /** Font file's type of the variant */
+    /** Format of the variable font file */
     defineField({
       name: 'format',
       title: 'Font format',
@@ -71,10 +92,12 @@ const fontType = defineType({
           { title: 'ttf', value: 'truetype' },
           { title: 'otf', value: 'opentype' },
         ],
+        layout: 'radio',
+        direction: 'horizontal',
       },
       validation: (rule) => rule.required(),
     }),
   ],
 });
 
-export default fontType;
+export default variableFontType;

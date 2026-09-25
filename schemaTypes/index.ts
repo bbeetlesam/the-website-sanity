@@ -8,8 +8,9 @@ import iconType from './objects/iconType';
 import typefaceType from './filetype/typefaceType';
 import focusFrameType from './objects/focusFrameType';
 import positionType from './objects/positionType';
-import fontType from './objects/fontVariantType';
+import staticFontType from './objects/fonts/staticFontType';
 import iconAssetType from './filetype/iconAssetType';
+import variableFontType from './objects/fonts/variableFontType';
 
 export const schemaTypes = [
   // Documents
@@ -26,5 +27,6 @@ export const schemaTypes = [
   iconType,
   focusFrameType,
   positionType,
-  fontType,
+  staticFontType,
+  variableFontType,
 ];

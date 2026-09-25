@@ -14,29 +14,84 @@ const typefaceType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    /** Variants of the typeface */
+    /** Type of the typeface variants (static or variable) */
     defineField({
-      name: 'variants',
-      title: 'Variants',
-      type: 'array',
+      name: 'variantsType',
+      title: 'Font Variants Type',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Static', value: 'static' },
+          { title: 'Variable', value: 'variable' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'static',
       validation: (rule) => rule.required(),
+    }),
+
+    /** Static font variants of the typeface */
+    defineField({
+      name: 'staticFonts',
+      title: 'Static Font Variants',
+      type: 'array',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          if (context.parent?.variantsType !== 'static') {
+            return true;
+          }
+
+          if (!value || value.length === 0) {
+            return 'At least one static font variant is required.';
+          }
+
+          return true;
+        }),
       of: [{ type: 'font' }],
+      hidden: ({ parent }) => parent?.variantsType !== 'static',
+    }),
+
+    /** Variable font variants of the typeface */
+    defineField({
+      name: 'variableFonts',
+      title: 'Variable Font Variants',
+      type: 'array',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          if (context.parent?.variantsType !== 'variable') {
+            return true;
+          }
+
+          if (!value || value.length === 0) {
+            return 'At least one variable font variant is required.';
+          }
+
+          return true;
+        }),
+      of: [{ type: 'variable-font' }],
+      hidden: ({ parent }) => parent?.variantsType !== 'variable',
     }),
   ],
 
   preview: {
     select: {
       title: 'name',
-      variants: 'variants',
+      variantsType: 'variantsType',
+      staticFonts: 'staticFonts',
+      variableFonts: 'variableFonts',
     },
 
-    prepare({ title, variants }) {
+    prepare({ title, variantsType, staticFonts, variableFonts }) {
       return {
-        title,
+        title: `${title} (${variantsType})`,
         subtitle:
-          variants
+          staticFonts
             ?.map((variant: { name: string }) => variant.name)
             .join(', ') || 'No variants yet...',
+        description:
+          variableFonts
+            ?.map((font: { name: string }) => font.name)
+            .join(', ') || 'No variable fonts yet...',
       };
     },
   },
