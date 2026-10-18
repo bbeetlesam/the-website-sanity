@@ -14,14 +14,41 @@ const externalLinkType = defineType({
       validation: (rule) => rule.required(),
     }),
 
+    // The category of the External Link
+    defineField({
+      name: 'category',
+      title: 'Category',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Social - Link to a Social Media', value: 'social' },
+          { title: "Game - Link to a Game's page", value: 'game' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'social',
+      validation: (rule) => rule.required(),
+    }),
+
+    // Whether the Game External Link is featured on the site
+    defineField({
+      name: 'featured',
+      title: 'Featured?',
+      description:
+        'Feature the Game on the site (Games page for mobile, especially).',
+      type: 'boolean',
+      hidden: ({ parent }) => parent?.category !== 'game',
+      initialValue: false,
+    }),
+
     // The href url link for the External Link
     defineField({
       name: 'href',
       title: 'Href URL',
       type: 'url',
       validation: (rule) =>
-        rule.uri({
-          scheme: ['http', 'https', 'mailto'],
+        rule.required().uri({
+          scheme: ['http', 'https', 'mailto', 'www'],
         }),
     }),
 
@@ -30,7 +57,13 @@ const externalLinkType = defineType({
       name: 'title',
       title: 'Link Title',
       type: 'string',
-      validation: (rule) => rule.required(),
+    }),
+
+    // The description of the External Link
+    defineField({
+      name: 'desc',
+      title: 'Link Description',
+      type: 'string',
     }),
 
     // The icon to represents the External Link
@@ -38,23 +71,29 @@ const externalLinkType = defineType({
       name: 'icon',
       title: 'Image Icon',
       type: 'icon',
-      validation: (rule) => rule.required(),
-    }),
-
-    // The order of the External Link
-    defineField({
-      name: 'order',
-      title: 'Order',
-      type: 'number',
-      validation: (rule) => rule.required(),
     }),
   ],
 
   preview: {
     select: {
-      title: 'id',
-      subtitle: 'title',
+      id: 'id',
+      title: 'title',
+      desc: 'desc',
+      category: 'category',
+      featured: 'featured',
       media: 'icon.default',
+    },
+
+    prepare({ title, media, category, desc, featured }) {
+      const linkCategory =
+        category === 'social' ? 'Social' : category === 'game' ? 'Game' : '';
+      const featuredText = featured ? '(F)' : '';
+
+      return {
+        title: `[${linkCategory}]${featuredText} ${title}`,
+        subtitle: `${desc}`,
+        media,
+      };
     },
   },
 });
