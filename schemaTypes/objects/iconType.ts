@@ -10,7 +10,6 @@ const iconType = defineType({
       name: 'default',
       title: 'Default Variant',
       type: 'image',
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'active',
