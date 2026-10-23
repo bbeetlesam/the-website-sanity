@@ -83,11 +83,11 @@ const typefaceType = defineType({
     prepare({ title, staticFonts, variableFonts }) {
       const variantGroups = [
         staticFonts?.length
-          ? `Static: ${staticFonts.map((variant) => variant.name).join(', ')}`
+          ? `Static: ${staticFonts.map((variant: any) => variant.name).join(', ')}`
           : null,
 
         variableFonts?.length
-          ? `Variable: ${variableFonts.map((variant) => variant.name).join(', ')}`
+          ? `Variable: ${variableFonts.map((variant: any) => variant.name).join(', ')}`
           : null,
       ].filter(Boolean);
 
