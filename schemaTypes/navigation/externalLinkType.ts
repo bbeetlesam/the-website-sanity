@@ -30,7 +30,7 @@ const externalLinkType = defineType({
       validation: (rule) => rule.required(),
     }),
 
-    // Whether the Game External Link is featured on the site
+    // Whether the Game External Link is featured on the mobile site gallery
     defineField({
       name: 'featured',
       title: 'Featured?',
@@ -39,6 +39,53 @@ const externalLinkType = defineType({
       type: 'boolean',
       hidden: ({ parent }) => parent?.category !== 'game',
       initialValue: false,
+    }),
+
+    // The genre of the Game External Link
+    defineField({
+      name: 'genre',
+      title: 'Genre',
+      type: 'string',
+      hidden: ({ parent }) => parent?.category !== 'game',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          if (context.document?.category !== 'game') return true;
+
+          return value ? true : 'This field is required for the game, ok?';
+        }),
+    }),
+
+    // The platform(s) the Game External Link is supported on
+    defineField({
+      name: 'platforms',
+      title: 'Supported Platform',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: [
+          { title: 'Web', value: 'web' },
+          { title: 'Windows', value: 'windows' },
+          { title: 'Linux', value: 'linux' },
+          { title: 'Mac', value: 'mac' },
+          { title: 'Android', value: 'android' },
+          { title: 'iOS', value: 'ios' },
+          { title: 'Other', value: 'other' },
+        ],
+      },
+      initialValue: ['web'],
+      hidden: ({ parent }) => parent?.category !== 'game',
+      validation: (rule) =>
+        rule.custom((value, context) => {
+          const category = context.document?.category;
+
+          if (category !== 'game') return true;
+
+          if (!value || value.length === 0) {
+            return 'Select at least one supported platform for the game, lur!';
+          }
+
+          return true;
+        }),
     }),
 
     // The href url link for the External Link
@@ -71,6 +118,17 @@ const externalLinkType = defineType({
       name: 'icon',
       title: 'Image Icon',
       type: 'icon',
+    }),
+
+    // The screenshot of the game, usually the gameplay or even can be an icon.
+    // Mainly used for the Game's card.
+    defineField({
+      name: 'screenshot',
+      title: 'Screenshot',
+      description:
+        "The screenshot of the game, usually the gameplay or even can be an icon. Mainly used for the Game's card.",
+      type: 'image',
+      hidden: ({ parent }) => parent?.category !== 'game',
     }),
   ],
 
