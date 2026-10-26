@@ -37,7 +37,10 @@ const typefaceType = defineType({
       type: 'array',
       validation: (rule) =>
         rule.custom((value, context) => {
-          if (context.parent?.variantsType !== 'static') {
+          const parent = context.parent as
+            { variantsType?: string } | undefined;
+
+          if (parent?.variantsType !== 'static') {
             return true;
           }
 
@@ -58,7 +61,10 @@ const typefaceType = defineType({
       type: 'array',
       validation: (rule) =>
         rule.custom((value, context) => {
-          if (context.parent?.variantsType !== 'variable') {
+          const parent = context.parent as
+            { variantsType?: string } | undefined;
+
+          if (parent?.variantsType !== 'variable') {
             return true;
           }
 

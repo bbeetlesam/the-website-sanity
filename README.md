@@ -22,10 +22,10 @@ The important breadcrumbs:
 
 ```text
 .
-├── schemaTypes/       # Content schemas
-├── sanity.config.ts   # Studio configuration
-├── sanity.cli.ts      # Sanity CLI configuration
-└── .env.example       # Environment variables list
+├── website-schema-types/ # Schema package (source in schemaTypes/)
+├── sanity.config.ts      # Studio configuration
+├── sanity.cli.ts         # Sanity CLI configuration
+└── .env.example          # Environment variables list
 ```
 
 ## Development

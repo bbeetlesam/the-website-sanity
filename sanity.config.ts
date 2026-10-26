@@ -1,7 +1,7 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
-import { schemaTypes } from './schemaTypes';
+import { schemaTypes } from './website-schema-types/schemaTypes';
 import { media } from 'sanity-plugin-media';
 
 import { defaultDocumentNode } from './studio/structure';

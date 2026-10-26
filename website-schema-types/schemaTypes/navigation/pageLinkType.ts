@@ -42,7 +42,8 @@ const pageLinkType = defineType({
     defineField({
       name: 'navOrder',
       title: 'Order',
-      description: "Order of the Page Link(s) in the frontend's navigation menu.",
+      description:
+        "Order of the Page Link(s) in the frontend's navigation menu.",
       type: 'number',
       validation: (rule) => rule.required(),
     }),

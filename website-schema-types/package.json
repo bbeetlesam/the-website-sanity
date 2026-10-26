@@ -1,0 +1,42 @@
+{
+  "name": "@bbeetlesam/website-sanity-schema",
+  "version": "1.0.0",
+  "private": false,
+  "type": "module",
+  "description": "Reusable Sanity schema definitions for bbeetlesam website.",
+  "license": "MIT",
+  "author": {
+    "name": "bbeetlesam"
+  },
+  "files": [
+    "schemaTypes"
+  ],
+  "exports": {
+    ".": {
+      "types": "./schemaTypes/index.ts",
+      "import": "./schemaTypes/index.ts"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bbeetlesam/the-website-sanity.git",
+    "directory": "website-schema-types"
+  },
+  "homepage": "https://github.com/bbeetlesam/the-website-sanity/tree/main/website-schema-types",
+  "bugs": {
+    "url": "https://github.com/bbeetlesam/the-website-sanity/issues"
+  },
+  "keywords": [
+    "sanity",
+    "schema",
+    "content-model",
+    "website"
+  ],
+  "types": "./schemaTypes/index.ts",
+  "peerDependencies": {
+    "sanity": "^6.20.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
